@@ -666,14 +666,50 @@ body.mobile .tb-sep { margin: 6px 1px; }
 .envl.letter-out .envl-letter { transform: translateY(-38%) rotate(-4deg); cursor: var(--paw-point); }
 .envl.letter-out .envl-letter:hover { transform: translateY(-44%) rotate(-2deg); }
 .rx-envw:not(.closed) .envl-pocket, .rx-envw:not(.closed) .envl-flap { pointer-events: none; }
-.envl.idle { animation: envBob 2.6s ease-in-out infinite; }
+.envl.idle, .eflip.idle { animation: envBob 2.6s ease-in-out infinite; }
+.envl.unsealed .envl-seal { opacity: 0; }
+
+/* envelope flip: the address side (To/From + stamp) and the flap side (wax seal) */
+.eflip { position: relative; perspective: 1600px; }
+.ef-in { position: relative; transform-style: preserve-3d; transition: transform .75s cubic-bezier(.45, 0, .25, 1); }
+.eflip.show-front .ef-in { transform: rotateY(180deg); }
+.ef-face { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.ef-back { position: relative; }
+.ef-front { position: absolute; left: 0; right: 0; top: 0; transform: rotateY(180deg); }
+.eflip:not(.show-front) .ef-front, .eflip.show-front .ef-back { pointer-events: none; }
+.eflip.flat .ef-in { transform-style: flat; transform: none; transition: none; }
+.eflip.flat .ef-front { display: none; }
+.eflip.flat .ef-face { -webkit-backface-visibility: visible; backface-visibility: visible; }
+.eflip.flat { perspective: none; }
+.env-hint.gone { pointer-events: none; }
+.envf { position: relative; width: 100%; aspect-ratio: 3 / 2; container-type: inline-size; background: var(--pk); border-radius: 2.6cqw; box-shadow: inset 0 0 0 3px var(--ink), 0 1.6cqw 0 rgba(42, 27, 20, .22); overflow: hidden; color: var(--ink); }
+.envf > * { position: absolute; }
+.envf.m-airmail::before { content: ""; position: absolute; inset: 3px; border-radius: 2.2cqw; padding: 3.4cqw; background: repeating-linear-gradient(45deg, #E8452C 0 2.4cqw, #fff 0 4.8cqw, #1F4FD8 0 7.2cqw, #fff 0 9.6cqw); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.envf-stamp { right: 7%; top: 10%; width: 19%; transform: rotate(4deg); filter: drop-shadow(0 .8cqw 0 rgba(42, 27, 20, .25)); pointer-events: none; }
+.envf-pm { right: 17%; top: 13%; width: 30%; z-index: 2; pointer-events: none; }
+.envf-from { left: 8%; top: 11%; max-width: 50%; display: flex; align-items: baseline; gap: 1.6cqw; font: 600 6cqw/1.15 var(--f-hand); color: rgba(42, 27, 20, .85); }
+.envf-to { left: 22%; right: 10%; top: 49%; display: flex; align-items: baseline; gap: 2cqw; padding-bottom: 1cqw; border-bottom: .5cqw solid rgba(42, 27, 20, .3); font: 700 9.6cqw/1.05 var(--f-hand); }
+.envf-lines { left: 22%; right: 10%; top: 70%; height: 11%; border-bottom: .5cqw solid rgba(42, 27, 20, .18); }
+.envf i { flex: none; font: 800 3.1cqw/1 var(--f-ui); font-style: normal; text-transform: uppercase; letter-spacing: .08em; color: rgba(42, 27, 20, .6); }
+.envf-v { min-width: 0; overflow-wrap: anywhere; }
+.envf-in { flex: 1; min-width: 0; width: 100%; padding: 0 1cqw; border: 0; border-radius: 1.2cqw; background: rgba(255, 255, 255, .35); font: inherit; color: var(--ink); outline: .5cqw dashed var(--cobalt); outline-offset: .6cqw; caret-color: var(--tomato); }
+.envf-in::placeholder { color: rgba(42, 27, 20, .38); }
+.envf-in:focus { background: rgba(255, 255, 255, .6); outline-style: solid; }
+.penv-done { position: absolute; left: 0; right: 0; top: 100%; margin-top: 22px; display: flex; justify-content: center; }
+.penv-done[hidden] { display: none; }
+.penv-done .cta { animation: rise .4s var(--spring) both; }
+body.mobile .penv-done { margin-top: 16px; }
+.card .stk .hm { display: none; position: absolute; left: -15px; top: -15px; width: 26px; height: 26px; border-radius: 50%; z-index: 3; cursor: move; touch-action: none;
+  background: var(--cobalt) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat; box-shadow: 0 0 0 3px #fff, 0 2px 4px rgba(15, 31, 92, .3); }
+.card.is-edit .stk.jot-item.sel .hm { display: block; }
+body.mobile .card .stk .hm { width: 30px; height: 30px; left: -17px; top: -17px; }
 @keyframes envBob { 0%, 100% { transform: none } 40% { transform: translateY(-8px) rotate(-1deg) } 60% { transform: translateY(-8px) rotate(1deg) } }
 
 /* table preview */
 .penv { position: absolute; left: -6%; right: -6%; top: 50%; transform: translateY(-50%); }
 .penv.in { animation: penvIn .45s var(--spring) both; }
 @keyframes penvIn { from { transform: translateY(-40%) scale(.92); opacity: 0 } }
-.penv.pop-stamp .envl-stamp, .penv.pop-m .envl { animation: popIn .4s var(--spring); }
+.penv.pop-stamp .envf-stamp, .penv.pop-m .envl, .penv.pop-m .envf { animation: popIn .4s var(--spring); }
 .penv.pop-seal .envl-seal { animation: sealIn .45s var(--spring) both; }
 @keyframes popIn { from { transform: scale(.82) rotate(-4deg) } }
 body.mobile .penv { left: -10%; right: -10%; }
@@ -719,9 +755,10 @@ body.mobile .side-or { width: 220px; }
 .rx-envw { position: absolute; left: 0; right: 0; top: calc(var(--W) * 1.2); z-index: 2; border-radius: 10px; outline: none; transition: transform .8s cubic-bezier(.45, 0, .3, 1); }
 .rx-envw.closed { transform: translateY(calc(var(--W) * -.8)); z-index: 4; cursor: var(--paw-point); }
 .rx-envw.closed:focus-visible { box-shadow: 0 0 0 4px var(--mustard); }
-.rx-envw.closed:hover .envl.idle { animation-play-state: paused; }
+.rx-envw.closed:hover .eflip.idle { animation-play-state: paused; }
 .rx-hintw { position: absolute; left: 0; right: 0; top: calc(var(--W) * 1.14); display: flex; justify-content: center; z-index: 5; }
 .rx-hintw .env-hint { margin: 0; }
+.rx-hintw { pointer-events: none; }
 .rx-after:not([hidden]) { display: grid; justify-items: center; gap: 10px; margin-top: -4px; animation: rise .5s var(--spring) both; }
 .read-letter { margin-top: 16px; aspect-ratio: 4 / 3; }
 .read-letter .np-msg { -webkit-line-clamp: 7; }
@@ -1083,6 +1120,23 @@ let ENVN = 0;
 function envMini(E) {
   return `<svg viewBox="0 0 60 40" aria-hidden="true"><rect x="1.5" y="1.5" width="57" height="37" rx="3" fill="${E.pocket}" stroke="${INK}" stroke-width="2.5"/>${E.stripe ? `<path d="M3 34h54" stroke="#E8452C" stroke-width="3" stroke-dasharray="4 4"/><path d="M7 34h50" stroke="#1F4FD8" stroke-width="3" stroke-dasharray="4 4"/>` : ""}<path d="${E.flapD}" transform="scale(.2 .175)" fill="${E.flap}" stroke="${INK}" stroke-width="13" stroke-linejoin="round"/></svg>`;
 }
+const addressed = (d) => !!(d?.note?.to?.trim() && d?.note?.from?.trim());
+const POSTMARK = `<svg class="envf-pm" viewBox="0 0 120 64" aria-hidden="true"><g fill="none" stroke="rgba(42,27,20,.5)" stroke-width="2.4"><circle cx="86" cy="32" r="24"/><circle cx="86" cy="32" r="18" stroke-width="1.4"/><path d="M2 18q8-6 16 0t16 0t16 0t16 0M2 30q8-6 16 0t16 0t16 0t16 0M2 42q8-6 16 0t16 0t16 0t16 0" stroke-linecap="round"/></g><text x="86" y="30" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="8" fill="rgba(42,27,20,.55)">PEEL&amp;POST</text><text x="86" y="41" text-anchor="middle" font-family="Plus Jakarta Sans" font-weight="800" font-size="7" fill="rgba(42,27,20,.55)">JAKARTA</text></svg>`;
+/** The address side of the envelope: From top-left, To in the middle, stamp top-right. */
+function envFrontHTML(d, edit = false) {
+  const e = envOf(d), E = ENV[e.m], n = d.note || {};
+  const f = (k, ph, lbl) => edit ? `<input class="envf-in" data-addr="${k}" maxlength="24" autocomplete="off" spellcheck="false" enterkeyhint="${k === "to" ? "next" : "done"}" placeholder="${ph}" aria-label="${lbl}" value="${esc(n[k] || "")}">` : `<span class="envf-v">${esc(n[k] || "")}</span>`;
+  return `<div class="envf m-${e.m}" style="--pk:${E.pocket}">
+    ${e.st ? `<img class="envf-stamp" src="${STK["deco-stamp-" + e.st].src}" alt="" aria-hidden="true">${POSTMARK}` : ""}
+    <div class="envf-from"><i>From</i>${f("from", "your name", "From: your name")}</div>
+    <div class="envf-to"><i>To</i>${f("to", "their name", "To: their name")}</div>
+    <span class="envf-lines" aria-hidden="true"></span>
+  </div>`;
+}
+/** Both sides of the envelope; `front` shows the address side, otherwise the flap with the seal. */
+function flipHTML(d, { front = false, cls = "", wrap = "", items = true, edit = false } = {}) {
+  return `<div class="eflip${front ? " show-front" : ""}${wrap ? " " + wrap : ""}"><div class="ef-in"><div class="ef-face ef-back"${front ? " inert" : ""}>${envHTML(d, { cls, items })}</div><div class="ef-face ef-front"${front ? "" : " inert"}>${envFrontHTML(d, edit)}</div></div></div>`;
+}
 /** Envelope markup. `items: false` leaves the stickers off the card inside (they fly out on their own). */
 function envHTML(d, { cls = "", items = true } = {}) {
   const e = envOf(d), E = ENV[e.m], n = d.note || { to: "you", from: "someone", letter: false }, k = ++ENVN;
@@ -1094,8 +1148,6 @@ function envHTML(d, { cls = "", items = true } = {}) {
       <path d="M1.5 1.5 L150 122 L298.5 1.5 V198.5 H1.5 Z" fill="${E.pocket}" stroke="${INK}" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
       <path d="M3 ${E.stripe ? 186 : 197} L128 112 M297 ${E.stripe ? 186 : 197} L172 112" fill="none" stroke="rgba(42,27,20,.3)" stroke-width="2" vector-effect="non-scaling-stroke"/>
       ${E.stripe ? `<rect x="1.5" y="186" width="297" height="12.5" fill="url(#am${k})" stroke="${INK}" stroke-width="3" vector-effect="non-scaling-stroke"/>` : ""}</svg>
-    <span class="envl-to" aria-hidden="true">To ${esc(n.to)}<small>from ${esc(n.from)}</small></span>
-    ${e.st ? `<img class="envl-stamp" src="${STK["deco-stamp-" + e.st].src}" alt="" aria-hidden="true">` : ""}
     <svg class="envl-flap" viewBox="0 0 300 132" preserveAspectRatio="none" aria-hidden="true"><path d="${E.flapD}" fill="${E.flap}" stroke="${INK}" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>
     ${e.se ? `<img class="envl-seal" src="${STK["deco-seal-" + e.se].src}" alt="" aria-hidden="true">` : ""}
   </div>`;
@@ -1352,12 +1404,13 @@ function step() {
   if (!d) return "paper";
   if (needs().length) return "stickers";
   if (!d.note) return "personal";
+  if (!addressed(d)) return "address";
   return "send";
 }
 /** The send step shows the packed envelope; "unpacked" puts the card back on the table to edit it. */
-const hintKey = () => { const s = step(); return s === "send" && ED.unpacked ? "unpacked" : s; };
-const packed = () => step() === "send" && !ED.unpacked;
-const ED = { sel: null, unpacked: false, pack: false, landed: new Set(), clearArmed: false };
+const hintKey = () => { const s = step(); return (s === "send" || s === "address") && ED.unpacked ? "unpacked" : s; };
+const packed = () => (step() === "send" || step() === "address") && !ED.unpacked;
+const ED = { sel: null, unpacked: false, pack: false, landed: new Set(), clearArmed: false, face: "back" };
 
 /* ------------------------------------------------------------ stage fit */
 const stage = $("#stage");
@@ -1383,9 +1436,10 @@ const HINTS = {
   paper: () => "Hi! I'm Pospus. Pick a paper from the shelf and drag it onto the table.",
   stickers: () => itemsLeft() === MIN_ITEMS ? `Nice paper! Pick ${MIN_ITEMS} things from the shelf: stickers, photo frames or text. Tap the paper anywhere to write on it.`
     : `Lovely! Add ${needText()}, then write your letter.`,
-  personal: () => "Write a letter to tuck into the envelope, or skip it and just write To & From.",
-  send: () => "Into the envelope it goes! Pick the envelope, stamp and wax seal, then press SEND CARD.",
-  unpacked: () => "Change anything you like, then tap Finishing touch to put it back in the envelope.",
+  personal: () => "Write a letter to tuck into the envelope, or put just the card in.",
+  address: () => "Now write who it's to and who it's from on the envelope, like real mail.",
+  send: () => "All addressed! Pick the envelope, stamp and wax seal, then press SEND CARD.",
+  unpacked: () => "Change anything you like, then tap Into the envelope to put it back.",
 };
 let bubbleT;
 function bubble(text, warn = false) {
@@ -1404,7 +1458,7 @@ function cardHTML(d, { edit = false } = {}) {
     const inner = st.jot ? (edit && ED.editing === s.u ? `<textarea class="jot jot-in" data-jot="${s.u}" maxlength="400" rows="1" spellcheck="false" aria-label="Write on your card" style="${jotStyle(s)}">${esc(s.t)}</textarea>` : `<div class="jot" style="${jotStyle(s)}">${esc(s.t)}</div>`)
       : st.svg ? itemSVG(s, edit) : `<img src="${st.src}" alt="" draggable="false">`;
     return `<div class="stk${st.jot ? " jot-item" : ""}${ED.sel === s.u && edit ? " sel" : ""}${ED.landed.has(s.u) ? " landed" : ""}" data-u="${s.u}" style="left:${s.x}%;top:${s.y}%;width:${s.w}%;--r:${s.r}deg;--fx:${s.f ? -1 : 1}"${
-      edit ? ` tabindex="0" role="button" aria-label="${esc(st.name)}${st.deco && !st.photo ? "" : st.photo ? "" : " sticker"}. Arrow keys move, plus and minus resize, R rotates, Delete removes."` : ""}>${inner}${edit ? `<span class="h" aria-hidden="true"></span>${st.jot ? '<span class="hw" aria-hidden="true" title="Drag to change the width"></span>' : ""}` : ""}</div>`;
+      edit ? ` tabindex="0" role="button" aria-label="${esc(st.name)}${st.deco && !st.photo ? "" : st.photo ? "" : " sticker"}. Arrow keys move, plus and minus resize, R rotates, Delete removes."` : ""}>${inner}${edit ? `<span class="h" aria-hidden="true"></span>${st.jot ? '<span class="hw" aria-hidden="true" title="Drag to change the width"></span><span class="hm" aria-hidden="true" title="Drag to move"></span>' : ""}` : ""}</div>`;
   }).join("");
   return `<div class="card shape-${d.base}${edit ? " is-edit" : ""}" ${edit ? `role="group" aria-label="Your ${esc(SHAPE[d.base].name.toLowerCase())} card on the table"` : 'aria-hidden="true"'}>
     <div class="paper-svg">${paperSVG(d.base, d.color)}</div><div class="c-stk">${stk}</div>${edit && !d.stickers.some((s) => s.sid === "jot") ? '<span class="write-hint" aria-hidden="true">✎ tap anywhere to write</span>' : ""}</div>`;
@@ -1417,7 +1471,7 @@ function inkSVG(ink) {
 function noteHTML(n) {
   const hasInk = n.ink && n.ink.length;
   return `<div class="notepaper np-${n.paper}"><div class="np-in">
-    <div class="np-to">To ${esc(n.to)},</div>
+    <div class="np-to">${n.to ? `To ${esc(n.to)},` : "&nbsp;"}</div>
     ${hasInk ? `<div class="np-ink">${inkSVG(n.ink)}</div>` : ""}
     ${n.msg ? `<div class="np-msg" style="${hasInk ? "-webkit-line-clamp:1" : "flex:1"}">${esc(n.msg)}</div>` : ""}
     <div class="np-from">— ${esc(n.from)}</div></div></div>`;
@@ -1665,10 +1719,13 @@ function renderTable() {
   if (d) sw.innerHTML = `<small>Color</small>${COLORS.map(([c, n]) => `<button class="swatch" role="radio" aria-checked="${d.color === c}" aria-label="${n} paper" title="${n}" style="--c:${c}" data-color="${c}"></button>`).join("")}<i class="sw-sep" aria-hidden="true"></i><button class="photo-btn" data-photo aria-label="Add a photo to your card" title="Add a photo">${CAMERA}</button><small>Photo</small>`;
   if (!d) { holder.innerHTML = ""; return; }
   if (packed()) {
-    const e = envOf(d), pack = ED.pack && !reduced();
-    holder.innerHTML = `<div class="penv${pack ? " in" : ""}${ED.pop ? " pop-" + ED.pop : ""}" role="img" aria-label="Your card in a ${ENV[e.m].name.toLowerCase()} envelope to ${esc(d.note.to)}${e.st ? `, ${DECO_NAME[e.st].toLowerCase()} stamp` : ""}${e.se ? `, ${DECO_NAME[e.se].toLowerCase()} wax seal` : ""}">${envHTML(d, { cls: pack ? "flap-open card-out" : "" })}</div>`;
+    const e = envOf(d), pack = ED.pack && !reduced(), ok = addressed(d);
+    if (!ok && !pack) ED.face = "front";
+    if (pack) ED.face = "back";
+    const front = ED.face === "front";
+    holder.innerHTML = `<div class="penv${pack ? " in" : ""}${ED.pop ? " pop-" + ED.pop : ""}" role="group" aria-label="Your card in a ${ENV[e.m].name.toLowerCase()} envelope${e.st ? `, ${DECO_NAME[e.st].toLowerCase()} stamp` : ""}${e.se ? `, ${DECO_NAME[e.se].toLowerCase()} wax seal` : ""}">${flipHTML(d, { front, cls: (pack ? "flap-open card-out" : "") + (ok ? "" : " unsealed"), edit: true })}<div class="penv-done"${front ? "" : " hidden"}><button class="cta" data-addr-done>Done, flip it over ↻</button></div></div>`;
     ED.pack = false; ED.pop = null; ED.landed.clear();
-    if (pack) runPack($("#holder .envl"));
+    if (pack) runPack($("#holder .envl"), ok);
     return;
   }
   holder.innerHTML = cardHTML(d, { edit: true }) + '<div class="toolbar" id="toolbar" hidden></div>';
@@ -1676,12 +1733,66 @@ function renderTable() {
   placeToolbar();
 }
 /** The card slides into the envelope, the flap closes, then the seal presses on. */
-function runPack(env) {
+function runPack(env, sealNow = true) {
   if (!env) return;
   setTimeout(() => env.classList.remove("card-out"), 420);
   setTimeout(() => env.classList.remove("flap-open"), 1120);
-  setTimeout(() => env.classList.add("seal-in"), 1560);
+  if (sealNow) setTimeout(() => env.classList.add("seal-in"), 1560);
+  else setTimeout(() => { if (env.isConnected) setFace("front"); }, 1500);
 }
+/** Turn the envelope over: "front" = address side to write To/From, "back" = flap with the seal. */
+function setFace(face, focus = true) {
+  ED.face = face;
+  const fl = $("#holder .eflip");
+  if (fl) {
+    fl.classList.toggle("show-front", face === "front");
+    fl.querySelector(".ef-front").inert = face !== "front";
+    fl.querySelector(".ef-back").inert = face === "front";
+    const dn = $("#holder .penv-done"); if (dn) dn.hidden = face !== "front";
+    if (face === "front" && focus) setTimeout(() => { const ins = $$("#holder .envf-in"), i = ins.find((x) => x.dataset.addr === "to" && !x.value.trim()) || ins.find((x) => !x.value.trim()) || ins.find((x) => x.dataset.addr === "to"); i?.focus({ preventScroll: true }); }, 420);
+  }
+  renderSide(); renderPostbox();
+  const st = hintKey(); if (st !== ED.lastStep) { ED.lastStep = st; bubble(HINTS[st]()); }
+}
+/** Finished writing To/From: flip to the flap side and press the seal on. */
+function addrDone() {
+  const n = S.draft?.note; if (!n) return;
+  for (const k of ["to", "from"]) {
+    if (!n[k]?.trim()) {
+      const i = $(`#holder .envf-in[data-addr="${k}"]`); i?.focus({ preventScroll: true });
+      return bubble(k === "to" ? "Who is it for? Write their name after To." : "Add your name after From so they know it's from you.", true);
+    }
+  }
+  n.to = n.to.trim(); n.from = n.from.trim(); save();
+  document.activeElement?.blur?.();
+  setFace("back", false);
+  const env = $("#holder .envl");
+  if (env && env.classList.contains("unsealed")) setTimeout(() => { env.classList.remove("unsealed"); if (envOf(S.draft).se) env.classList.add("seal-in"); cheer(); }, 700);
+  $("#sendBtn").focus({ preventScroll: true });
+}
+const ADDR = { snap: null };
+$("#holder").addEventListener("input", (e) => {
+  if (!e.target.matches(".envf-in") || !S.draft?.note) return;
+  S.draft.note[e.target.dataset.addr] = e.target.value.replace(/^\s+/, "");
+  save(); renderPostbox();
+});
+$("#holder").addEventListener("focusin", (e) => { if (e.target.matches?.(".envf-in") && !ADDR.snap) ADDR.snap = JSON.stringify(S.draft); });
+$("#holder").addEventListener("focusout", (e) => {
+  if (!e.target.matches?.(".envf-in")) return;
+  setTimeout(() => {
+    if (document.activeElement?.matches?.(".envf-in")) return;
+    if (ADDR.snap && S.draft && ADDR.snap !== JSON.stringify(S.draft)) { H.past.push(ADDR.snap); H.future = []; renderUndo(); }
+    ADDR.snap = null;
+    const st = hintKey(); if (st !== ED.lastStep) { ED.lastStep = st; bubble(HINTS[st]()); }
+  }, 0);
+});
+$("#holder").addEventListener("keydown", (e) => {
+  if (!e.target.matches?.(".envf-in") || e.key !== "Enter") return;
+  e.preventDefault();
+  const from = $('#holder .envf-in[data-addr="from"]');
+  if (e.target.dataset.addr === "to" && from && !from.value.trim()) from.focus();
+  else addrDone();
+});
 $("#swatches").addEventListener("click", (e) => {
   if (e.target.closest("[data-photo]")) {
     if (photoCount() >= MAX_PHOTOS) return toast(`Up to ${MAX_PHOTOS} photos per card.`);
@@ -1823,6 +1934,8 @@ holder.addEventListener("click", (e) => {
     else if (ED.sel) $(`#holder .stk[data-u="${ED.sel}"]`)?.focus({ preventScroll: true });
     return;
   }
+  if (e.target.closest("[data-addr-done]")) { addrDone(); return; }
+  if (e.target.closest(".envf, .penv-done")) return;
   if (e.target.closest(".penv")) { bubble("Your card is sealed in the envelope. Tap ← Edit card to change it.", true); return; }
   const el = e.target.closest(".stk");
   if (el && ED.tapAct === el.dataset.u) { ED.tapAct = null; const s = findStk(el.dataset.u); if (s && (s.sid === "text" || s.sid === "jot" || (s.sid === "frame" && !photoSrc(s)))) actOn(s); return; }
@@ -1837,7 +1950,7 @@ holder.addEventListener("pointerdown", (e) => {
   if (e.target.closest(".toolbar")) { if (ED.editing) e.preventDefault(); return; }
   if (e.target.closest(".note, .jot-in")) return;
   const u = e.target.closest(".stk")?.dataset.u;
-  const was = !!ED.editing, onHandle = !!e.target.closest(".h, .hw") && u === ED.editing;
+  const was = !!ED.editing, onHandle = !!e.target.closest(".h, .hw, .hm") && u === ED.editing;
   if (ED.editing && !onHandle) endJot();
   const el = u && $(`#holder .stk[data-u="${u}"]`);
   if (!el) { if (!was && e.target.closest(".card")) ED.tapPaper = [e.clientX, e.clientY]; select(null); return; }
@@ -1849,7 +1962,8 @@ holder.addEventListener("pointerdown", (e) => {
   if (!onHandle) el.focus({ preventScroll: true });
   const r = $("#holder .card").getBoundingClientRect();
   const snap = JSON.stringify(S.draft);
-  if (e.target.closest(".hw")) sdrag = { t: "wd", s, snap: onHandle ? JOT.snap || snap : snap, r, x0: e.clientX, w0: s.w, keep: onHandle };
+  if (e.target.closest(".hm")) sdrag = { t: "mv", s, snap: onHandle ? JOT.snap || snap : snap, r, x0: e.clientX, y0: e.clientY, sx: s.x, sy: s.y, tap: false };
+  else if (e.target.closest(".hw")) sdrag = { t: "wd", s, snap: onHandle ? JOT.snap || snap : snap, r, x0: e.clientX, w0: s.w, keep: onHandle };
   else if (e.target.closest(".h")) {
     const cx = r.left + (s.x / 100) * r.width, cy = r.top + (s.y / 100) * r.height;
     sdrag = { t: "xf", s, snap, cx, cy, d0: Math.hypot(e.clientX - cx, e.clientY - cy) || 1, a0: Math.atan2(e.clientY - cy, e.clientX - cx), w0: s.w, r0: s.r, fs0: s.fs };
@@ -1912,7 +2026,8 @@ function renderSide() {
     <div class="notes${locked ? " locked" : ""}" role="group" aria-label="Write a letter">${NOTES.map(([v, nm], i) => `<button class="note-pick${cur === v ? " on" : ""}" data-letter="${v}" style="--tilt:${[-5, 3, -2][i]}deg" ${locked ? "disabled" : ""} aria-label="${cur === v ? `Edit your letter on ${nm} paper` : `Write a letter on ${nm} paper`}"><span class="notepaper np-${v}"></span>${cur === v ? "✓ Your letter" : nm}</button>`).join("")}</div>
     ${locked ? `<div class="side-foot"><span class="lock">🔒 ${d ? `Add ${needText()} first` : "Put a paper on the table first"}</span></div>`
       : `<div class="side-or"><span>or</span></div>
-    <div class="side-foot"><button class="addr-btn${cur === "none" ? " on" : ""}" data-addr>${cur === "none" ? "✓ " : "✉ "}No letter, just To &amp; From</button>${n ? '<button class="cta" data-pack>Finishing touch →</button>' : ""}</div>`}`;
+    <div class="side-foot">${!n ? '<button class="cta" data-addr>Just the card, into the envelope →</button>'
+      : `<button class="cta" data-pack>Into the envelope →</button>${cur !== "none" ? '<button class="linkish" data-addr>Take the letter out</button>' : ""}`}</div>`}`;
 }
 /** Finishing touch: envelope model, stamp and wax seal (stamp and seal optional). */
 function renderTouch(p, d) {
@@ -1925,7 +2040,7 @@ function renderTouch(p, d) {
       <div class="ft-row"><b id="ftStamp">Stamp</b><div class="ft-opts" role="radiogroup" aria-labelledby="ftStamp">${DECO_C.map((c) => opt("stamp", c, e.st === c)).join("")}${opt("stamp", null, e.st === null)}</div></div>
       <div class="ft-row"><b id="ftSeal">Wax seal</b><div class="ft-opts" role="radiogroup" aria-labelledby="ftSeal">${DECO_C.map((c) => opt("seal", c, e.se === c)).join("")}${opt("seal", null, e.se === null)}</div></div>
     </div>
-    <div class="side-foot"><button class="linkish" data-unpack>← Edit card</button><button class="linkish" data-edit-note>${hasLetter(d.note) ? "Edit letter" : "Edit To &amp; From"}</button></div>`;
+    <div class="side-foot"><button class="linkish" data-unpack>← Edit card</button>${hasLetter(d.note) ? '<button class="linkish" data-edit-note>Edit letter</button>' : ""}${ED.face === "front" ? "" : '<button class="linkish" data-edit-addr>Edit To &amp; From</button>'}</div>`;
 }
 $("#side").addEventListener("click", (e) => {
   const b = e.target.closest("button"); if (!b || b.disabled) return;
@@ -1933,12 +2048,16 @@ $("#side").addEventListener("click", (e) => {
     const cur = envOf(S.draft); if (cur[k] === v) return;
     ED.pop = pop; edit(() => (S.draft.env = { ...cur, [k]: v }));
     $(`#side [data-${pop === "m" ? "env" : pop}="${v ?? "none"}"]`)?.focus();
+    // show the side the change is on: stamp on the address side, seal on the flap
+    const want = k === "st" ? "front" : k === "se" && addressed(S.draft) ? "back" : null;
+    if (want && want !== ED.face) requestAnimationFrame(() => { setFace(want, false); $(`#side [data-${pop}="${v ?? "none"}"]`)?.focus(); });
   };
   if (ds.letter) openLetter(ds.letter);
-  else if ("addr" in ds) openAddress();
+  else if ("addr" in ds) { const n = S.draft.note; saveNote({ letter: false, to: n?.to || "", from: n?.from || "" }, hasLetter(n) ? "Letter taken out. Undo brings it back." : ""); }
+  else if ("editAddr" in ds) setFace("front");
   else if ("pack" in ds) { ED.unpacked = false; ED.pack = true; ED.sel = null; renderAll(); cheer(); }
   else if ("unpack" in ds) { ED.unpacked = true; renderAll(); }
-  else if ("editNote" in ds) hasLetter(S.draft.note) ? openLetter(S.draft.note.paper) : openAddress();
+  else if ("editNote" in ds) openLetter(S.draft.note.paper);
   else if (ds.env) setEnv("m", ds.env, "m");
   else if (ds.stamp) setEnv("st", ds.stamp === "none" ? null : ds.stamp, "stamp");
   else if (ds.seal) setEnv("se", ds.seal === "none" ? null : ds.seal, "seal");
@@ -1949,7 +2068,7 @@ function saveNote(note, msg) {
   edit(() => { S.draft.note = note; }, { redraw: false });
   ED.unpacked = false; ED.pack = !wasPacked; ED.sel = null;
   closeDialog(true); renderAll(); cheer();
-  $("#sendBtn").focus({ preventScroll: true });
+  if (addressed(S.draft)) $("#sendBtn").focus({ preventScroll: true });
   if (msg) toast(msg);
 }
 function openAddress() {
@@ -2097,10 +2216,6 @@ function openLetter(paper) {
     <div class="l-hand"><div class="pad-wrap np-${paper}"><canvas class="pad" id="pad" tabindex="-1" aria-label="Handwriting area"></canvas><span class="pad-ph" id="padPh">scribble here…</span></div>
       <div class="pad-tools"><button id="padUndo">Undo stroke</button><button id="padClear">Clear</button></div></div>
     <div class="l-type field"><label for="lMsg">Your message <span class="small" id="lCount" style="float:right">0/200</span></label><textarea class="l-msg" id="lMsg" maxlength="200" rows="2" placeholder="Happy birthday! I hope…">${esc(n?.msg || "")}</textarea></div>
-    <div class="l-grid">
-      <div class="field"><label for="lTo">To</label><input class="input" id="lTo" maxlength="24" autocomplete="off" placeholder="Their name" value="${esc(a?.to || "")}"></div>
-      <div class="field"><label for="lFrom">From</label><input class="input" id="lFrom" maxlength="24" autocomplete="off" placeholder="Your name" value="${esc(a?.from || "")}"></div>
-    </div>
     <div class="l-foot"><span class="err" id="lErr" aria-live="polite"></span><button class="btn blue" id="tuck">Fold it into the envelope ↗</button></div>
   </div></div>`;
   openDialog($("#letter"));
@@ -2161,12 +2276,10 @@ $("#letter").addEventListener("click", (e) => {
   if (id === "padUndo") { L.ink.pop(); drawPad(); }
   else if (id === "padClear") { L.ink = []; drawPad(); }
   else if (id === "tuck") {
-    const to = $("#lTo").value.trim(), from = $("#lFrom").value.trim();
+    const a = S.draft.note, to = a?.to || "", from = a?.from || "";
     const msg = L.mode === "type" ? $("#lMsg").value.trim() : "", ink = L.mode === "hand" ? L.ink : [];
     if (L.mode === "hand" && !ink.length) { $("#lErr").textContent = "Write a little message on the paper first."; return; }
     if (L.mode === "type" && !msg) { $("#lErr").textContent = "Type a little message first."; return $("#lMsg").focus(); }
-    if (!to) { $("#lErr").textContent = "Who is it for?"; return $("#lTo").focus(); }
-    if (!from) { $("#lErr").textContent = "Add your name so they know it's from you."; return $("#lFrom").focus(); }
     saveNote({ letter: true, paper: L.paper, to, from, msg, ink }, hasLetter(S.draft.note) ? "Letter updated." : "");
   }
 });
@@ -2190,7 +2303,9 @@ async function uploadPhoto(src) {
 }
 let SENDING = false;
 $("#sendBtn").addEventListener("click", async () => {
-  if (step() !== "send" || SENDING) return;
+  if (SENDING) return;
+  if (step() === "address") { if (ED.unpacked) { ED.unpacked = false; renderAll(); } setFace("front"); ED.lastStep = "address"; setTimeout(() => bubble("Write To & From on the envelope first, then press SEND CARD.", true), 60); return; }
+  if (step() !== "send") return;
   const empty = S.draft.stickers.find((s) => s.sid === "frame" && !photoSrc(s));
   if (empty) { select(empty.u); bubble("One photo frame is still empty. Add a photo, or remove the frame.", true); return; }
   const todo = S.draft.stickers.filter((s) => isPhoto(s) && s.src && !s.url);
@@ -2202,7 +2317,8 @@ $("#sendBtn").addEventListener("click", async () => {
     finally { SENDING = false; btn.classList.remove("busy"); btn.textContent = "Send card"; btn.removeAttribute("aria-busy"); }
     if (step() !== "send") return;
   }
-  if (ED.unpacked) { ED.unpacked = false; ED.sel = null; renderAll(); }
+  if (ED.unpacked) { ED.unpacked = false; ED.sel = null; ED.face = "back"; renderAll(); }
+  if (ED.face === "front") { SENDING = true; setFace("back", false); await new Promise((r) => setTimeout(r, 800)); SENDING = false; }
   const d = JSON.parse(JSON.stringify(S.draft));
   d.env = envOf(d);
   const rec = { id: "PP-" + randCode(6), at: Date.now(), card: d, total: total(d) };
@@ -2214,9 +2330,9 @@ $("#sendBtn").addEventListener("click", async () => {
   };
   if (reduced()) return done();
   // camera zooms to the mailbox while the card drops into the slot
-  const pb = $("#postbox"), slot = pb.querySelector(".pb-body").getBoundingClientRect(), cardEl = $("#holder .envl") || $("#holder .card");
+  const pb = $("#postbox"), slot = pb.querySelector(".pb-body").getBoundingClientRect(), cardEl = $("#holder .eflip") || $("#holder .card");
   const cr = cardEl.getBoundingClientRect();
-  const g = document.createElement("div"); g.className = "ghost"; g.innerHTML = cardEl.outerHTML.replace("is-edit", "");
+  const g = document.createElement("div"); g.className = "ghost"; g.innerHTML = cardEl.outerHTML.replace("is-edit", "").replace(" show-front", "");
   Object.assign(g.style, { left: cr.left + "px", top: cr.top + "px", width: cr.width + "px" });
   document.body.append(g);
   $("#holder").style.visibility = "hidden";
@@ -2361,7 +2477,7 @@ function drawRx() {
     <div class="rx-head" id="rxHead">${rxHead(open)}</div>
     <div class="rx-scene" id="rxScene">
       <div class="rx-card${open ? "" : " pre"}">${cardHTML(c)}</div>
-      <div class="rx-envw${open ? "" : " closed"}" id="envw"${open ? "" : ` role="button" tabindex="0" aria-label="Open the ${ENV[e.m].name.toLowerCase()} envelope from ${esc(n.from)}"`}>${envHTML(c, { cls: open ? `flap-open card-out card-gone${hasLetter(n) ? " letter-out" : ""}` : reduced() ? "" : "idle", items: e.m === "airmail" })}</div>
+      <div class="rx-envw${open ? "" : " closed"}" id="envw"${open ? "" : ` role="button" tabindex="0" aria-label="Open the ${ENV[e.m].name.toLowerCase()} envelope from ${esc(n.from)}"`}>${flipHTML(c, { front: !open, wrap: open ? "flat" : reduced() ? "" : "idle", cls: open ? `flap-open card-out card-gone${hasLetter(n) ? " letter-out" : ""}` : "", items: e.m === "airmail" })}</div>
       ${open ? "" : '<div class="rx-hintw"><p class="env-hint" aria-hidden="true">Tap the envelope to open it ✉</p></div>'}
     </div>
     <div class="rx-after" id="rxAfter"${open ? "" : " hidden"}>
@@ -2430,10 +2546,14 @@ function openEnvelope() {
   RX.busy = true;
   const env = w.querySelector(".envl"), card = $("#rx .rx-card"), items = $$("#rx .rx-card .stk");
   const at = (ms, fn) => RX.timers.push(setTimeout(fn, ms));
-  env.classList.remove("idle"); ["role", "tabindex", "aria-label"].forEach((a) => w.removeAttribute(a));
+  const fl = w.querySelector(".eflip");
+  fl.classList.remove("idle", "show-front"); ["role", "tabindex", "aria-label"].forEach((a) => w.removeAttribute(a));
   $(".env-hint")?.classList.add("gone");
-  if (e.se) env.classList.add("opening");
-  let t = e.se ? 340 : 80;
+  let t = 820;
+  fl.querySelector(".ef-back").inert = false; fl.querySelector(".ef-front").inert = true;
+  at(t, () => fl.classList.add("flat"));
+  if (e.se) at(t, () => env.classList.add("opening"));
+  t += e.se ? 340 : 80;
   at(t, () => env.classList.add("flap-open"));
   t += 560;
   let scatter = null;
