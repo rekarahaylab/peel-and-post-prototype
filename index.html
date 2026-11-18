@@ -769,6 +769,15 @@ body.mobile .side-or { width: 220px; }
 .card .stk.jot-item .h { right: -12px; bottom: -12px; }
 .toolbar button .tb-a { font: 900 15px/1 var(--f-display); margin-right: 1px; }
 .toolbar button .tb-a.sm { font-size: 11px; }
+/* Done: always visible at the right end, even when the toolbar has to scroll on a phone */
+.toolbar { overflow-x: auto; scrollbar-width: none; touch-action: pan-x; overscroll-behavior-x: contain; }
+.toolbar::-webkit-scrollbar { display: none; }
+.toolbar > * { flex-shrink: 0; }
+.toolbar button.tb-done { position: sticky; right: 0; width: auto; display: flex; align-items: center; gap: 5px; margin-left: 6px; padding: 0 14px 0 11px;
+  border-radius: 999px; background: var(--mustard); color: var(--ink); font: 800 14px/1 var(--f-ui); box-shadow: -8px 0 0 var(--ink); }
+.toolbar button.tb-done span { font-size: 15px; }
+.toolbar button.tb-done:hover:not([disabled]) { background: var(--mustard-d); }
+body.mobile .toolbar button.tb-done { width: auto; height: 36px; padding: 0 12px 0 10px; font-size: 13px; }
 .toolbar button[data-tb="smaller"], .toolbar button[data-tb="bigger"] { display: flex; align-items: baseline; justify-content: center; gap: 0; }
 
 /* =========================================================
@@ -2727,8 +2736,9 @@ function placeToolbar() {
     : it.sid === "song" ? '<button data-tb="song" aria-label="Change song" title="Change song">♪</button><i class="tb-sep" aria-hidden="true"></i>' : it.sid === "text" ? '<button data-tb="text" aria-label="Edit text" title="Edit text">Aa</button><i class="tb-sep" aria-hidden="true"></i>'
     : it.sid === "jot" ? `${ED.editing === it.u ? "" : '<button data-tb="write" aria-label="Write" title="Write">✎</button>'}<button data-tb="font" aria-label="Font: ${FONTS[it.font][2]}. Change font" title="Font" style="font-family:'${FONTS[it.font][0]}';font-weight:${FONTS[it.font][1]}">Aa</button><button data-tb="color" aria-label="Text color: ${TEXT_COLORS.find(([c]) => c === it.color)?.[1] || "custom"}. Change color" title="Color"><i class="tb-dot" style="--c:${it.color}"></i></button><button data-tb="align" aria-label="Alignment: ${it.al || "left"}. Change alignment" title="Align">${alignIcon(it.al || "left")}</button><i class="tb-sep" aria-hidden="true"></i>` : "";
   const jot = it.sid === "jot";
-  tb.innerHTML = extra + `<button data-tb="smaller" aria-label="${jot ? "Smaller letters" : "Make smaller"}" title="${jot ? "Smaller letters" : "Smaller"}" ${(jot ? it.fs <= FS_MIN : it.w <= 8) ? "disabled" : ""}>${jot ? '<span class="tb-a sm">A</span>−' : "−"}</button><button data-tb="bigger" aria-label="${jot ? "Bigger letters" : "Make bigger"}" title="${jot ? "Bigger letters" : "Bigger"}" ${(jot ? it.fs >= FS_MAX : it.w >= 80) ? "disabled" : ""}>${jot ? '<span class="tb-a">A</span>+' : "+"}</button><i class="tb-sep" aria-hidden="true"></i><button data-tb="del" aria-label="Remove" title="Remove">🗑</button><button data-tb="dup" aria-label="Duplicate sticker" title="Duplicate">⧉</button>${svgItem ? "" : '<button data-tb="flip" aria-label="Flip sticker" title="Flip">⇋</button>'}<button data-tb="rotl" aria-label="Rotate left" title="Rotate left">⟲</button><button data-tb="rotr" aria-label="Rotate right" title="Rotate right">⟳</button><button data-tb="up" aria-label="Bring forward" title="Bring forward" ${i === S.draft.stickers.length - 1 ? "disabled" : ""}>↑</button><button data-tb="down" aria-label="Send backward" title="Send backward" ${i === 0 ? "disabled" : ""}>↓</button>`;
+  tb.innerHTML = extra + `<button data-tb="smaller" aria-label="${jot ? "Smaller letters" : "Make smaller"}" title="${jot ? "Smaller letters" : "Smaller"}" ${(jot ? it.fs <= FS_MIN : it.w <= 8) ? "disabled" : ""}>${jot ? '<span class="tb-a sm">A</span>−' : "−"}</button><button data-tb="bigger" aria-label="${jot ? "Bigger letters" : "Make bigger"}" title="${jot ? "Bigger letters" : "Bigger"}" ${(jot ? it.fs >= FS_MAX : it.w >= 80) ? "disabled" : ""}>${jot ? '<span class="tb-a">A</span>+' : "+"}</button><i class="tb-sep" aria-hidden="true"></i><button data-tb="del" aria-label="Remove" title="Remove">🗑</button><button data-tb="dup" aria-label="Duplicate sticker" title="Duplicate">⧉</button>${svgItem ? "" : '<button data-tb="flip" aria-label="Flip sticker" title="Flip">⇋</button>'}<button data-tb="rotl" aria-label="Rotate left" title="Rotate left">⟲</button><button data-tb="rotr" aria-label="Rotate right" title="Rotate right">⟳</button><button data-tb="up" aria-label="Bring forward" title="Bring forward" ${i === S.draft.stickers.length - 1 ? "disabled" : ""}>↑</button><button data-tb="down" aria-label="Send backward" title="Send backward" ${i === 0 ? "disabled" : ""}>↓</button><button data-tb="done" class="tb-done" aria-label="Done" title="Done (Esc)"><span aria-hidden="true">✓</span> Done</button>`;
   tb.hidden = false;
+  tb.style.maxWidth = (innerWidth - 12) / SCALE + "px";
   const hr = $("#holder").getBoundingClientRect(), sr = el.getBoundingClientRect();
   const half = tb.offsetWidth / 2, lo = half + 6 - hr.left / SCALE, hi = (innerWidth - hr.left) / SCALE - half - 6;
   tb.style.left = clamp((sr.left + sr.width / 2 - hr.left) / SCALE, lo, Math.max(lo, hi)) + "px";
@@ -2736,6 +2746,13 @@ function placeToolbar() {
   const below = above < (mobile() ? 50 : -30);
   tb.classList.toggle("below", below);
   tb.style.top = (below ? (sr.bottom - hr.top) / SCALE + 18 : above) + "px";
+}
+/** Done: finish writing (if any), drop the selection, hide handles + toolbar, close the phone keyboard. */
+function dismissSel() {
+  if (!ED.sel && !ED.editing) return;
+  ED.sel = null;
+  if (ED.editing) endJot(); else select(null);
+  const ae = document.activeElement; if (ae && ae.closest?.("#holder")) ae.blur();
 }
 function select(u) {
   ED.sel = u;
@@ -2754,6 +2771,7 @@ const holder = $("#holder");
 holder.addEventListener("click", (e) => {
   const b = e.target.closest("[data-tb]");
   if (b) {
+    if (b.dataset.tb === "done") { dismissSel(); return; }
     const s = findStk(ED.sel); if (!s) return;
     const arr = S.draft.stickers, i = arr.indexOf(s);
     if (b.dataset.tb === "photo" || b.dataset.tb === "text") return b.dataset.tb === "text" ? openTextEditor(s.u) : actOn(s);
@@ -2802,10 +2820,11 @@ holder.addEventListener("pointerdown", (e) => {
   if (e.target.closest(".toolbar")) { if (ED.editing) e.preventDefault(); return; }
   if (e.target.closest(".note, .jot-in")) return;
   const u = e.target.closest(".stk")?.dataset.u;
+  const hadSel = !!ED.sel;
   const was = !!ED.editing, onHandle = !!e.target.closest(".h, .hw, .hm") && u === ED.editing;
   if (ED.editing && !onHandle) endJot();
   const el = u && $(`#holder .stk[data-u="${u}"]`);
-  if (!el) { if (!was && e.target.closest(".card")) ED.tapPaper = [e.clientX, e.clientY]; select(null); return; }
+  if (!el) { if (!was && !hadSel && e.target.closest(".card")) ED.tapPaper = [e.clientX, e.clientY]; dismissSel(); return; }
   if (e.pointerType === "mouse" && e.button !== 0) return;
   e.preventDefault();
   const s = findStk(el.dataset.u); if (!s) return;
@@ -2849,7 +2868,7 @@ addEventListener("pointerup", endStk);
 addEventListener("pointercancel", endStk);
 holder.addEventListener("focusin", (e) => { const el = e.target.closest?.(".stk"); if (el && ED.sel !== el.dataset.u) select(el.dataset.u); });
 holder.addEventListener("keydown", (e) => {
-  if (e.target.matches?.(".jot-in")) { if (e.key === "Escape") { e.preventDefault(); const u = ED.editing; endJot(); $(`#holder .stk[data-u="${u}"]`)?.focus(); } return; }
+  if (e.target.matches?.(".jot-in")) { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); dismissSel(); return; } if (e.key === "Escape") { e.preventDefault(); const u = ED.editing; endJot(); $(`#holder .stk[data-u="${u}"]`)?.focus(); } return; }
   const el = e.target.closest?.(".stk"); if (!el) return;
   const s = findStk(el.dataset.u); if (!s) return;
   const st = e.shiftKey ? 6 : 2, k = e.key;
@@ -3782,6 +3801,12 @@ textSVG = function (s) {
   return _textSVG(s);
 };
 
+/* tap anywhere outside the card (table, shelf, wall, phone drawer…) = done */
+document.addEventListener("pointerdown", (e) => {
+  if (!S.draft || (!ED.sel && !ED.editing) || DLG.el) return;
+  const t = e.target; if (!t.closest || t.closest("#holder, dialog, [role='dialog'], #sndPop, #sndFab")) return;
+  dismissSel();
+}, true);
 /* ---------------------------------------------------------------- free rotation
    A round handle above the selected item rotates it (snaps to 0/45/90… when close);
    on touch, two fingers pinch to resize and twist to rotate. The corner handle only resizes. */
