@@ -1598,6 +1598,26 @@ body.m-make .m-back { padding: 0 10px; }
 .m-prev { display: none; }
 body.m-make.m-step .m-prev { display: inline-flex; }
 .rx.preview .rx-top a { display: none; }
+
+/* ---- 18 Nov 12.25: the song sits above the card ---- */
+.rx-song.rx-song-top { display: grid; grid-template-columns: 44px 1fr auto auto; align-items: center; gap: 10px; width: min(440px, calc(100% - 24px)); margin: 6px auto 12px; padding: 8px 10px 8px 8px;
+  border-radius: 999px; background: rgba(255, 248, 236, .96); box-shadow: 0 0 0 2px rgba(45, 91, 208, .18), 0 8px 20px rgba(90, 40, 10, .18); text-align: left; animation: rsIn .6s cubic-bezier(.3, 1.4, .5, 1) .3s both; }
+@keyframes rsIn { from { opacity: 0; transform: translateY(-10px) scale(.95); } }
+.rs-disc { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; color: #fff; font: 800 20px/1 var(--f-ui);
+  background: radial-gradient(circle, #F7C548 0 7px, #3A2A33 8px 15px, #55434E 16px 17px, #3A2A33 18px); }
+.rx-song-top.playing .rs-disc { animation: rsSpin 3s linear infinite; }
+@keyframes rsSpin { to { transform: rotate(360deg); } }
+.rx-song-top .rx-song-info { min-width: 0; gap: 0; }
+.rx-song-top .rx-song-info small { font-size: 11px; }
+.rx-song-top .rx-song-info b, .rx-song-top .rx-song-info span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rx-song-top .rx-song-info b { font-size: 15px; } .rx-song-top .rx-song-info span { font-size: 12.5px; }
+.rs-play { width: 44px; height: 44px; border: 0; border-radius: 50%; cursor: pointer; background: linear-gradient(#5585EE, #2D5BD0); color: #fff; font: 800 16px/1 var(--f-ui); box-shadow: 0 3px 0 #1F43A3; animation: rsPulse 1.8s ease-in-out infinite; }
+.rs-play.on { animation: none; background: #3E9A5C; box-shadow: 0 3px 0 #2E7445; }
+@keyframes rsPulse { 50% { box-shadow: 0 3px 0 #1F43A3, 0 0 0 8px rgba(85, 133, 238, .22); } }
+.rs-open { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; color: #8A6047; text-decoration: none; font: 800 14px/1 var(--f-ui); background: #FCE8D4; }
+.rx-song-top .rx-player { grid-column: 1 / -1; margin-top: 6px; }
+.rx-song-top:has(.rx-player:not([hidden])) { border-radius: 22px; }
+.rx.preview .rx-song-top { display: grid; }
 </style>
 </head>
 <body>
@@ -3310,12 +3330,13 @@ function drawRx() {
   const c = rec.card, n = rxNote(), e = envOf(c), open = RX.open;
   rx.innerHTML = `${bg}<div class="rx-in">${top}
     <div class="rx-head" id="rxHead">${rxHead(open)}</div>
+    ${songBlock(c)}
     <div class="rx-scene" id="rxScene">
       <div class="rx-card${open ? "" : " pre"}">${cardHTML(c)}</div>
       <div class="rx-envw${open ? "" : " closed"}" id="envw"${open ? "" : ` role="button" tabindex="0" aria-label="Open the ${ENV[e.m].name.toLowerCase()} envelope from ${esc(n.from)}"`}>${flipHTML(c, { front: !open, wrap: open ? "flat" : reduced() ? "" : "idle", cls: open ? `flap-open card-out card-gone${hasLetter(n) ? " letter-out" : ""}` : "", items: e.m === "airmail" })}</div>
       ${open ? "" : '<div class="rx-hintw"><p class="env-hint" aria-hidden="true">Tap the envelope to open it ✉</p></div>'}
     </div>
-    <div class="rx-after" id="rxAfter"${open ? "" : " hidden"}>${songBlock(c)}
+    <div class="rx-after" id="rxAfter"${open ? "" : " hidden"}>
       <div class="row rx-actions" style="justify-content:center">${hasLetter(n) ? '<button class="btn" id="rxRead">Read the letter</button>' : ""}<button class="btn" data-rx="save">⤓ Save card</button><button class="btn" data-rx="share">Share</button><a class="btn blue" href="#/">Make one back →</a></div>
       <button class="linkish rx-replay" id="rxReplay">↺ Put it back in the envelope</button>
     </div>
@@ -4461,13 +4482,16 @@ function openCardSong() {
 }
 songBlock = function (c) {
   const s = songOfCard(c); if (!s || !okSong(s)) return "";
-  return `<div class="rx-song"><div class="rx-song-art">${songSVG({ ...s, st: "player" })}</div><div class="rx-song-info"><small>${esc(rxNote().from)} added a song</small><b>${esc(s.t || "A song for you")}</b>${s.a ? `<span>${esc(s.a)}</span>` : ""}
-    <div class="row"><button class="btn blue" data-rx="play">▶ Play the song</button><a class="linkish" href="${songURL(s)}" target="_blank" rel="noopener">Open in ${s.sp === "spotify" ? "Spotify" : "YouTube"} ↗</a></div></div>
+  return `<div class="rx-song rx-song-top" role="group" aria-label="Song from ${esc(rxNote().from)}"><span class="rs-disc" aria-hidden="true">♪</span>
+    <div class="rx-song-info"><small>${esc(rxNote().from)} added a song for you</small><b>${esc(s.t || "A song for you")}</b>${s.a ? `<span>${esc(s.a)}</span>` : ""}</div>
+    <button class="rs-play" data-rx="play" aria-label="Play ${esc(s.t || "the song")}">▶</button>
+    <a class="rs-open" href="${songURL(s)}" target="_blank" rel="noopener" aria-label="Open in ${s.sp === "spotify" ? "Spotify" : "YouTube"}">↗</a>
     <div class="rx-player" id="rxPlayer" hidden></div></div>`;
 };
 function playSong(auto) {
   const s = songOfCard(RX.rec?.card), p = $("#rxPlayer"); if (!s || !p || !p.hidden) return;
-  p.hidden = false; const b = $('[data-rx="play"]'); if (b) b.textContent = "♪ Playing";
+  p.hidden = false; const b = $('[data-rx="play"]'); if (b) { b.textContent = "♪"; b.classList.add("on"); b.setAttribute("aria-label", "Playing"); }
+  $(".rx-song-top")?.classList.add("playing");
   p.innerHTML = `<iframe class="${s.sp}" src="${songEmbed(s)}" title="${esc(s.t || "Song")}" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     ${auto && s.sp === "spotify" ? '<p class="small" style="text-align:center;margin:6px 0 0">Press ▶ on the player to start the song.</p>' : ""}`;
 }
