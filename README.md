@@ -7,11 +7,15 @@ Clickable prototype of Peel & Post, a digital greeting-card site. Everything liv
 **Live:** https://rekarahaylab.github.io/peel-and-post-prototype/
 
 ## Try it
-1. Drag a paper from the shelf onto the table.
-2. Add at least 2 items from the shelf (stickers, photo frames, text). Tap the paper to write on it.
-3. Add a finishing touch, write the letter, press **SEND CARD**.
-4. Copy the card link and open it on another phone or browser: the recipient taps the envelope and the card slides out.
+1. Tap **Open the shop**: the lights come on, Pospus says hi and opens the door.
+2. Browse the shelves, then tap **Create your card**. Drag (or tap) a paper onto the table.
+3. Add at least 2 items from the shelf (stickers, photo frames, text, confetti backgrounds). Tap the paper to write on it.
+4. Write a letter or address the envelope, pick the envelope, stamp, wax seal and an optional song (Spotify/YouTube link).
+5. **Preview as recipient**, then press **SEND CARD**, pay with the demo QRIS and copy the short link.
+6. Open the link on another phone or browser: the envelope opens, the card flips over and the stickers fade in. The recipient can save or share it.
 
 ## Notes
 - Photos are uploaded to Supabase Storage (bucket `card-photos`, project `peel-and-post`) when the card is sent. The key in `index.html` is the public anon key: it can only add new JPG files (max 1 MB) to that bucket.
-- Prototype only: nothing is charged and nothing is mailed.
+- Short card links are stored in Supabase (`public.short_cards`, reached only through the `put_short_card` / `get_short_card` functions). If that fails the long link is used.
+- Music and sound effects are synthesised in the browser; the 🔊 button sets on/off and volume.
+- Prototype only: the QRIS payment is a demo, nothing is charged and nothing is mailed.
